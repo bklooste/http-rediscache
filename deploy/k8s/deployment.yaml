@@ -3,27 +3,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: example-service
+  name: http-rediscache
 spec:
   replicas: 2
   selector:
-    matchLabels: { app: example-service }
+    matchLabels: { app: http-rediscache }
   template:
     metadata:
-      labels: { app: example-service }
+      labels: { app: http-rediscache }
     spec:
       containers:
-        - name: service
-          image: ghcr.io/bklooste/example-service/service:1.0   # pin an explicit version
+        - name: cache
+          image: ghcr.io/bklooste/http-rediscache/cache:0.1   # pin an explicit version
           ports:
             - containerPort: 8080
           env:
-            - name: Service__RedisConnectionString
-              value: redis.default.svc:6379        # your Redis
-            - name: Service__KeyPrefix
-              value: example
+            - name: ConnectionStrings__Redis        # the only required setting; the rest default sensibly
+              value: redis.default.svc:6379,abortConnect=false   # your Redis
+            # - { name: Cache__KeyPrefix, value: "prod:" }       # one per environment if they share a Redis
             # Secrets: mount a Secret and point at it instead of a plain value —
-            # - { name: Service__RedisConnectionString_FILE, value: /secrets/redis }
+            # - { name: ConnectionStrings__Redis_FILE, value: /secrets/redis }
           readinessProbe:
             httpGet: { path: /health, port: 8080 }
           livenessProbe:
@@ -40,9 +39,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: example-service
+  name: http-rediscache
 spec:
-  selector: { app: example-service }
+  selector: { app: http-rediscache }
   ports:
     - port: 80
       targetPort: 8080

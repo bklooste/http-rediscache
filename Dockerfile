@@ -7,14 +7,14 @@ WORKDIR /src
 COPY . .
 # Regular (framework-dependent) publish. Switch to PublishAot=true + the runtime-deps:10.0-noble-chiseled-aot
 # image only for services that already support AOT — a technical choice, never a licensing one.
-RUN dotnet publish src/Example.Service/Example.Service.csproj -c Release -a $TARGETARCH \
+RUN dotnet publish src/HttpRedisCache/HttpRedisCache.csproj -c Release -a $TARGETARCH \
       -p:Version=$VERSION -p:UseAppHost=false -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS runtime
 ARG VERSION=0.0.0
 ARG REVISION=unknown
-LABEL org.opencontainers.image.title="example-service" \
-      org.opencontainers.image.source="https://github.com/bklooste/example-service" \
+LABEL org.opencontainers.image.title="http-rediscache" \
+      org.opencontainers.image.source="https://github.com/bklooste/http-rediscache" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version="$VERSION" \
       org.opencontainers.image.revision="$REVISION"
@@ -26,5 +26,5 @@ ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 # No shell/curl in a chiselled image, so the app probes itself.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD ["dotnet", "Example.Service.dll", "--healthcheck"]
-ENTRYPOINT ["dotnet", "Example.Service.dll"]
+  CMD ["dotnet", "HttpRedisCache.dll", "--healthcheck"]
+ENTRYPOINT ["dotnet", "HttpRedisCache.dll"]

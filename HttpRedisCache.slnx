@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HttpRedisCache/HttpRedisCache.csproj" />
+  </Folder>
+  <Folder Name="/tst/">
+    <Project Path="tst/HttpRedisCache.Tests/HttpRedisCache.Tests.csproj" />
+  </Folder>
+</Solution>

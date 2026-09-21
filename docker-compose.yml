@@ -1,6 +1,6 @@
-# Quick start:  docker compose up
-# Runs the service plus the external dependency it needs. Redis is a *network* dependency of the
-# service, not something it ships — point Service__RedisConnectionString at your own Redis in production.
+# Quick start:  docker compose up -d      (see the README for the MISS -> HIT -> STALE walkthrough)
+# Runs the cache plus the external dependency it needs. Redis is a *network* dependency of the service, not
+# something it ships — point ConnectionStrings__Redis at your own Redis in production.
 services:
   redis:
     image: redis:7-alpine
@@ -9,15 +9,33 @@ services:
       interval: 5s
       retries: 10
 
-  service:
-    image: ghcr.io/bklooste/example-service/service:latest
-    # build: .          # uncomment to build from source instead of pulling
+  cache:
+    image: ghcr.io/bklooste/http-rediscache/cache:latest
+    build: .                # builds from this checkout; delete this line to pull the published image instead
     ports:
       - "8080:8080"
     environment:
-      Service__RedisConnectionString: redis:6379
-      Service__KeyPrefix: example
+      ConnectionStrings__Redis: redis:6379   # the only required setting; everything else has a default
+      # Cache__KeyPrefix: dev:
+      # Cache__DefaultTtlSeconds: 30
       # OTEL_EXPORTER_OTLP_ENDPOINT: http://collector:4317
     depends_on:
       redis:
         condition: service_healthy
+
+  # Stands in for *your* slow service: answers with the time it generated the page, so a cached
+  # response (same time) is easy to tell from a fresh one (new time).
+  upstream:
+    image: python:3-alpine
+    command:
+      - python
+      - -c
+      - |
+        import http.server, time
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(("generated at " + time.strftime("%H:%M:%S") + "\n").encode())
+        http.server.ThreadingHTTPServer(("", 8080), H).serve_forever()

@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}/service
+  IMAGE: ghcr.io/${{ github.repository }}/cache
 
 jobs:
   test:
@@ -24,11 +24,11 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - run: dotnet restore Example.slnx
-      - run: dotnet build Example.slnx -c Release --no-restore
+      - run: dotnet restore HttpRedisCache.slnx
+      - run: dotnet build HttpRedisCache.slnx -c Release --no-restore
       - name: Test
         run: >
-          dotnet test Example.slnx -c Release --no-build
+          dotnet test HttpRedisCache.slnx -c Release --no-build
           --filter "TestType!=PerfTest"
           --logger trx --results-directory TestResults
       - name: Publish test results
@@ -42,9 +42,12 @@ jobs:
       # Container smoke test: the built image must start and report healthy before it can be published.
       - name: Build image
         run: docker build -t smoke:ci .
+      # The image must start with nothing but a Redis connection string (every other setting has a default).
       - name: Smoke test
         run: |
-          docker run -d --name smoke -p 8080:8080 smoke:ci
+          docker network create smoke
+          docker run -d --name smoke-redis --network smoke redis:7-alpine
+          docker run -d --name smoke --network smoke -p 8080:8080 -e ConnectionStrings__Redis=smoke-redis:6379 smoke:ci
           for i in $(seq 1 30); do
             [ "$(docker inspect -f '{{.State.Health.Status}}' smoke)" = healthy ] && exit 0
             sleep 2

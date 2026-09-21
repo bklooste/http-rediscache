@@ -3,8 +3,8 @@
 	<PropertyGroup>
 		<Authors>Ben Kloosterman</Authors>
 		<Copyright>Copyright (c) 2026 Ben Kloosterman</Copyright>
-		<PackageProjectUrl>https://github.com/bklooste/example-service</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/bklooste/example-service</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/bklooste/http-rediscache</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/bklooste/http-rediscache</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>

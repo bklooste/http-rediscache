@@ -1,4 +1,4 @@
-example-service
+http-rediscache
 Copyright (c) 2026 Ben Kloosterman — MIT (see LICENSE)
 
 Third-party software in the published image
@@ -7,4 +7,11 @@ Generated from the release SBOM (sbom.spdx.json attached to each GitHub release)
 Copyleft (LGPL/GPL) dependencies are permitted and recorded here for transparency. Commercial or
 licence-required packages must never be a shipped default.
 
-<!-- replace with the generated inventory: name, version, licence -->
+Direct runtime dependencies (the release SBOM additionally lists transitive packages and the base image):
+
+| Package | Licence |
+|---|---|
+| StackExchange.Redis | MIT |
+| AspNetCore.HealthChecks.Redis | Apache-2.0 |
+| OpenTelemetry (Extensions.Hosting, Exporter.OpenTelemetryProtocol, Instrumentation.AspNetCore / Http / StackExchangeRedis) | Apache-2.0 |
+| .NET runtime and ASP.NET Core (base image `mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled`) | MIT |
