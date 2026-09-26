@@ -11,7 +11,6 @@ services:
 
   cache:
     image: ghcr.io/bklooste/http-rediscache/cache:latest
-    build: .                # builds from this checkout; delete this line to pull the published image instead
     ports:
       - "8080:8080"
     environment:
