@@ -6,6 +6,10 @@ actually changed.
 
 ## Unreleased
 
+- New: `GLOBAL_`-prefixed env vars (e.g. `GLOBAL_ConnectionStrings__Redis` from a shared env file) are read as
+  environment-wide defaults, below `appsettings.json`; `DOTNET_` vars still override everything.
+- Fixed: a startup failure (e.g. missing `ConnectionStrings__Redis`) now prints one clear line and exits 1;
+  before, the unhandled exception crashed the container with SIGSEGV (exit 139).
 - Initial public release: extracted from the `plat-cache` service of a private platform, with its behaviour
   unchanged — same `/cache` contract (`url`, `cacheVar`, `cacheHeader`, `ttl`), same `X-Cache` / `Age`
   headers, same Redis key layout.

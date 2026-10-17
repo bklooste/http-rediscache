@@ -16,6 +16,8 @@ if (args.Contains("--healthcheck"))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+// Environment-wide defaults (GLOBAL_ConnectionStrings__Redis, from a shared env file) sit below appsettings.json.
+builder.Configuration.AddGlobalDefaults();
 // Also read DOTNET_-prefixed env vars (DOTNET_ConnectionStrings__Redis), and let them win over the plain
 // form — existing deployments configure the service that way. Then apply *_FILE secret mounts.
 builder.Configuration.AddEnvironmentVariables("DOTNET_");
@@ -63,7 +65,17 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(m => m.AddAspNetCoreInstrumentation().AddHttpClientInstrumentation().AddOtlpExporter());
 
 var app = builder.Build();
-_ = app.Services.GetRequiredService<IConnectionMultiplexer>();
+try
+{
+    _ = app.Services.GetRequiredService<IConnectionMultiplexer>();
+}
+catch (Exception ex)
+{
+    // Exit cleanly with the message. Left unhandled, the exception aborts the runtime, which in the chiselled
+    // image dies with SIGSEGV (exit 139) and buries the cause under a stack trace.
+    Console.Error.WriteLine($"[http-rediscache] Startup failed: {ex.Message}");
+    return 1;
+}
 
 app.MapHealthChecks("/health");
 app.AddCacheApis();

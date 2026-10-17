@@ -69,11 +69,19 @@ public class StartupTests(RedisFixture redis)
     [Fact]
     public void A_missing_redis_connection_string_fails_startup_and_names_the_setting()
     {
-        using var app = new CacheApp(new());
+        // Program catches the failure, writes it to stderr and exits 1 (an unhandled exception crashed the
+        // container with SIGSEGV, exit 139), so the setting's name is asserted on stderr.
+        var stderr = new StringWriter();
+        var original = Console.Error;
+        Console.SetError(stderr);
+        try
+        {
+            using var app = new CacheApp(new());
+            Assert.ThrowsAny<Exception>(() => app.CreateClient());
+        }
+        finally { Console.SetError(original); }
 
-        var ex = Assert.ThrowsAny<Exception>(() => app.CreateClient());
-
-        Assert.Contains("ConnectionStrings:Redis", ex.ToString());
+        Assert.Contains("ConnectionStrings:Redis", stderr.ToString());
     }
 
     [Theory]
