@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE: docker.io/kaisea/http-rediscache
+  IMAGE: docker.io/bklooste/http-rediscache
 
 jobs:
   test:

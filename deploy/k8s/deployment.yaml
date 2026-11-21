@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: cache
-          image: kaisea/http-rediscache:0.1   # pin an explicit version
+          image: bklooste/http-rediscache:0.1   # pin an explicit version
           ports:
             - containerPort: 8080
           env:
