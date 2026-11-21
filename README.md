@@ -1,7 +1,7 @@
 # http-rediscache
 
 [![CI](https://github.com/bklooste/http-rediscache/actions/workflows/ci.yml/badge.svg)](https://github.com/bklooste/http-rediscache/actions/workflows/ci.yml)
-[![Docker Hub](https://img.shields.io/docker/v/kaisea/http-rediscache?label=docker%20hub)](https://hub.docker.com/r/kaisea/http-rediscache)
+[![Docker Hub](https://img.shields.io/docker/v/bklooste/http-rediscache?label=docker%20hub)](https://hub.docker.com/r/bklooste/http-rediscache)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 An **HTTP response cache backed by Redis**, with stale-while-revalidate. Put it in front of a slow or busy
@@ -49,7 +49,7 @@ Just the image, if you already have a Redis:
 
 ```bash
 docker run --rm -p 8080:8080 -e ConnectionStrings__Redis=host.docker.internal:6379 \
-  kaisea/http-rediscache:latest
+  bklooste/http-rediscache:latest
 ```
 
 Images are public on GHCR — no pull secret needed. Multi-arch (`linux/amd64`, `linux/arm64`).
