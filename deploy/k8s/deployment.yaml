@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: cache
-          image: ghcr.io/bklooste/http-rediscache/cache:0.1   # pin an explicit version
+          image: kaisea/http-rediscache:0.1   # pin an explicit version
           ports:
             - containerPort: 8080
           env:

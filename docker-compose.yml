@@ -10,7 +10,7 @@ services:
       retries: 10
 
   cache:
-    image: ghcr.io/bklooste/http-rediscache/cache:latest
+    image: kaisea/http-rediscache:latest
     ports:
       - "8080:8080"
     environment:
